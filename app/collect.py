@@ -52,6 +52,8 @@ def getVersionModel( locator ):
         return VersionModel( info['url'], info['commit_revision' ] )
   except svn.exception.SvnException:
     return None
+  except AttributeError:
+    return None
 
   return None
 
