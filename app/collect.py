@@ -6,6 +6,7 @@ import os.path, time
 import stat
 import pprint
 import svn.local
+import svn.exception
 import difflib
 import psutil
 
@@ -18,7 +19,7 @@ def getProjectNames( user ):
   """
   projectRoot='/uhome/' + user + '/projects/'
   # get all dirs that contain a CMakeLists.txt
-  projectsPath= projectRoot + os.sep + "*" + os.sep + "CMakeLists.txt"
+  projectsPath= projectRoot + os.sep + "*" + os.sep + ".svn"
   files = glob(projectsPath)
   # The 'special' global diana project.
   projects = [ 'diana' ]
@@ -44,10 +45,14 @@ def getProjectModelsByName( names, user ):
   return models 
      
 def getVersionModel( locator ):
-  if os.path.exists( locator.srcdir ):
-      r = svn.local.LocalClient( locator.srcdir )
-      info = r.info()
-      return VersionModel( info['url'], info['commit_revision' ] )
+  try:
+      if os.path.exists( locator.srcdir ):
+        r = svn.local.LocalClient( locator.srcdir )
+        info = r.info()
+        return VersionModel( info['url'], info['commit_revision' ] )
+  except svn.exception.SvnException:
+    return None
+
   return None
 
 def getBuildModel( locator ):
