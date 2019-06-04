@@ -38,7 +38,7 @@ def injectForTemplates():
 @app.route('/index')
 @login_required
 def index():
-    projectNames = getProjectNames()
+    projectNames = getProjectNames( userName() )
     model = getProjectModelsByName( projectNames, userName() )
     return render_template('index.html', title='Home', projects=model )
 
@@ -142,7 +142,7 @@ def acceptImg():
 @app.route('/status')
 @login_required
 def status():
-  projectNames = getProjectNames()
+  projectNames = getProjectNames( userName() )
   models = getProjectModelsByName( projectNames, userName() )
   status = []
   for model in models:

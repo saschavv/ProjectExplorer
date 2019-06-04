@@ -11,12 +11,12 @@ import psutil
 
 from app.models import *
 
-def getProjectNames():
+def getProjectNames( user ):
   """ 
       Get all the projects for the current user. The projects 
       are directories that are found in the PROJECT_SHARE folder.
   """
-  projectRoot=os.environ['PROJECTS_SHARE']
+  projectRoot='/uhome/' + user + '/projects/'
   # get all dirs that contain a CMakeLists.txt
   projectsPath= projectRoot + os.sep + "*" + os.sep + "CMakeLists.txt"
   files = glob(projectsPath)
