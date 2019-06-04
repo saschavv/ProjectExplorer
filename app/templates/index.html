@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+  <div class="row">
+    <div class="col-md-12">
+
+    <h1>Projects</h1>
+    <table class="table">
+    <tr><th>Project</th><th>Version</th><th>Source</th><th>Build</th><th>Tests</th><th>Test results</th></tr>
+    {% for project in projects %}
+    <tr data-project='{{ project.name }}'>
+        <td>{{ project.name }}</td>
+        <td>{{ project.versionInfo.url }} - {{ project.versionInfo.revision }}</td>
+        <td><a href="{{ url_for( 'viewsources', project=project.name  ) }}">browse</a></td>
+        <td>last build: <span class='lastbuild'>{{ project.buildInfo.lastModified }}</span></td>
+        <td><a href="{{ url_for( 'viewtests', project=project.name ) }}">browse</a></td>
+        <td>
+            <span style="color:red" class="{{'hidden' if not project.testInfo.hasErrors }}"><i class="fas fa-times"></i></span> 
+            <span style="color:green" class="{{'hidden' if project.testInfo.hasErrors }}"><i class="fas fa-check"></i></span>
+            <a href="{{ url_for( 'failedTests', project = project.name ) }}">
+              <span class='numberoftests'>{{ project.testInfo.numberOfTests }}</span> / 
+              <span class='numberoferrors'>{{ project.testInfo.numberOfFailedTests }} </span></a>
+        </td>
+    </tr>
+    {% endfor %}
+    </table>
+    <div class='update small'></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block app_script %}
+
+<script>
+  function setTestInfo( project, numberoferrors, numberoftests ) {
+    var projectRow = $(".table").find(`[data-project='${project}']`);
+    projectRow.find(".numberoftests").html( numberoftests );
+    projectRow.find(".numberoferrors").html( numberoferrors );
+  }
+  function setBuildInfo( project, build ) {
+    var projectRow = $(".table").find(`[data-project='${project}']`);
+    projectRow.find(".lastbuild").html( build );
+  }
+
+  // For todays date;
+  Date.prototype.today = function () { 
+    return ((this.getDate() < 10)?"0":"") + this.getDate() +"/"+(((this.getMonth()+1) < 10)?"0":"") + 
+            (this.getMonth()+1) +"/"+ this.getFullYear();
+  }
+
+  // For the time now
+  Date.prototype.timeNow = function () {
+     return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + 
+           this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+  }
+
+  $(function() {
+     var since = 0;
+     setInterval(function() {
+        $.ajax('{{ url_for('status') }}').done(
+           function(status) { 
+             // console.log( status );
+             status.forEach( function( value, index, a ) {
+               setTestInfo( value.name, value.numberoferrors, value.numberoftests )
+               setBuildInfo( value.name, value.last_modified )
+             });
+             var datetime = "Updated on: " + new Date().today() + " @ " + new Date().timeNow();
+             $('.update').html( datetime )
+           }
+        );
+     }, 5000);
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Directory: {{ path }}</h3>
+      <hr/>
+      <ul>
+        {% for item in itemList %}
+            {% if path == None %}
+            <li><a href="/{{ browser }}/{{ project }}/{{ item }}">{{ item }}</a></li>
+            {% else %}
+            <li><a href="/{{ browser }}/{{ project }}/{{ path }}/{{ item }}">{{ item }}</a></li>
+            {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+

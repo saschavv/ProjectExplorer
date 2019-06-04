@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_header %}
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
+{% endblock %} 
+
+{% block app_content %}
+  <div class="row">
+    <div class="col-md-12">
+       <p>Current file: {{ currentFile }}</p>
+       <pre><code id="code">{{ code }}</code></pre>
+    </div>
+  </div>
+{% endblock %} 
+
+{% block app_script %}
+<script>
+addEventListener('load', () => {
+  const code = document.querySelector('#code');
+  const worker = new Worker('/static/js/worker.js');
+  worker.onmessage = (event) => { code.innerHTML = event.data; }
+  worker.postMessage(code.textContent);
+});
+</script>
+{% endblock %} 

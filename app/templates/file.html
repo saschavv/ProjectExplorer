@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+  <div class="row">
+    <div class="col-md-12">
+       <p>Current file: {{ currentFile }}</p>
+       <p>
+        <table class="table">
+            {% for key, value in fileProperties.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+       </p>
+    </div>
+  </div>
+{% endblock %} 
+
+
