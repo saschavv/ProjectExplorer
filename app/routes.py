@@ -206,7 +206,7 @@ def browse( browser, project, folder, path ):
 def viewsources(urlFilePath):
   pl = ProjectLocator( None, userName() )
   root = pl.projects
-  explorer = Explorer( root, urlFilePath )
+  explorer = Explorer( 'viewsources', root, urlFilePath )
   return explorer.render()
 
 
@@ -216,9 +216,9 @@ def viewsources(urlFilePath):
 @app.route('/viewtests', defaults={'urlFilePath': None })
 @login_required
 def viewtests(urlFilePath):
-  pl = ProjectLocator( project, userName() )
-  root = pl.testdirs
-  explorer = Explorer( root, urlFilePath )
+  pl = ProjectLocator( None, userName() )
+  root = pl.tests
+  explorer = Explorer( 'viewtests', root, urlFilePath )
   return explorer.render()
 
 #---------------------------------------------------------------------------

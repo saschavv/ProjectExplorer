@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_header %}
-<style type="text/css">
+  {{super()}}
+  <link rel="stylesheet" href="{{ url_for('static', filename='twentytwenty/css/twentytwenty.css') }}" type="text/css" media="screen" />
+  <style type="text/css">
         table.diff {font-family:Courier; border:medium;}
         .diff_header {background-color:#e0e0e0}
         td.diff_header {text-align:right}
@@ -9,7 +11,7 @@
         .diff_add {background-color:#aaffaa}
         .diff_chg {background-color:#ffff77}
         .diff_sub {background-color:#ffaaaa}
-    </style>
+  </style>
 {% endblock %}
 
 {% block app_content %}
@@ -19,7 +21,7 @@
       <div class="row">
         <div class="col-md-12">
           {{ testname }}:
-         <a href='/viewtests/{{ project }}/{{ testname }}.dir'><i class='fas fa-arrow-alt-circle-right'></i></a>  
+         <a href='/viewtests/{{ project }}/tmp/{{ testname }}.dir'><i class='fas fa-arrow-alt-circle-right'></i></a>  
         <p>
         <form class='form' action='/accepttext' method='post'>
          <input type='hidden' name="project" value='{{ project }}'/>
@@ -41,6 +43,10 @@
       <div class="row">
         <div class="col-md-12">
         <p>
+        <div class="pull-right">
+            <a href='/viewsources/{{ project }}/{{ test.testpath }}'><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a>
+            <a href='/viewtests/{{ project }}/tmp/{{ test.testpath }}//{{ test.test }}.dir'><i class='fas fa-file' rel="tooltip" title='test results'></i></a>  
+        </div>
         <form class='form' action='/acceptimg' method='post'>
          <input type='hidden' name="project" value='{{ project }}'/>
          <input type='hidden' name="test" value='{{ test.testpath }}/{{ test.test }}'/>
@@ -54,27 +60,52 @@
         </div>
       </div>
     <div class="row">
-      <div class="col-md-4">
-        ref
-        <a href="/img/{{ project }}/src/{{test.testpath}}/{{ test.original }}?{{ test.orginal_mtime }}">
-        <img src='/img/{{ project }}/src/{{test.testpath}}/{{ test.original }}?{{ test.orginal_mtime }}' class="img-responsive">
-        </a>
+      <div class="col-md-3">
+        <div class="row">
+         <div class="col-md-12">
+            original
+            <a href="/img/{{ project }}/src/{{test.testpath}}/{{ test.original }}?{{ test.orginal_mtime }}">
+              <img src='/img/{{ project }}/src/{{test.testpath}}/{{ test.original }}?{{ test.orginal_mtime }}' class="img-responsive">
+            </a>
+         </div>
+        </div>
+        <div class="row">
+         <div class="col-md-12">
+           new
+           <a href="/img/{{ project }}/test/{{test.testpath}}/{{test.test}}.dir/{{ test.new }}?{{ test.new_mtime }}">
+           <img src='/img/{{ project }}/test/{{test.testpath}}/{{test.test}}.dir/{{ test.new }}?{{ test.new_mtime }}' class="img-responsive">
+           </a>
+         </div>
+        </div>
+        <div class="row">
+         <div class="col-md-12">
+           difference
+           <a href="/img/{{ project }}/test/{{test.testpath}}/{{ test.test }}.dir/{{test.diff}}?{{ test.diff_mtime }}">
+             <img src='/img/{{ project }}/test/{{test.testpath}}/{{ test.test }}.dir/{{test.diff}}?{{ test.dif_mtime }}' class="img-responsive">
+           </a>
+         </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        new
-        <a href="/img/{{ project }}/test/{{test.testpath}}/{{test.test}}.dir/{{ test.new }}">
-        <img src='/img/{{ project }}/test/{{test.testpath}}/{{test.test}}.dir/{{ test.new }}' class="img-responsive">
-        </a>
+      <div class="col-md-9">
+          <div class="diffimg">
+            <img src='/img/{{ project }}/src/{{test.testpath}}/{{ test.original }}?{{ test.orginal_mtime }}' class="img-responsive">
+            <img src='/img/{{ project }}/test/{{test.testpath}}/{{test.test}}.dir/{{ test.new }}' class="img-responsive">
+          </div>
       </div>
-      <div class="col-md-4">
-         diff
-        <a href="/img/{{ project }}/test/{{test.testpath}}/{{ test.test }}.dir/{{test.diff}}">
-          <img src='/img/{{ project }}/test/{{test.testpath}}/{{ test.test }}.dir/{{test.diff}}' class="img-responsive">
-        </a>
-      </div>
-      </div>
-        <hr/>
+     </div>
+      <hr/>
     {% endif %}
     {% endfor %}
   </div>
 {% endblock %}
+
+{% block app_script %}
+  {{super()}}
+  <script src="{{ url_for('static', filename='twentytwenty/js/jquery.event.move.js') }}" type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='twentytwenty/js/jquery.twentytwenty.js') }}" type="text/javascript"></script>
+<script>
+  $(document).ready(function(){
+    $(".diffimg").twentytwenty();
+  });
+</script>
+{% endblock %} 

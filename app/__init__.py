@@ -13,4 +13,7 @@ app.register_blueprint(errors_bp)
 bootstrap = Bootstrap(app)
 silk = Silk(app)
 
+from flask_bootstrap import StaticCDN
+app.extensions['bootstrap']['cdns']['jquery'] = StaticCDN()
+
 from app import routes

@@ -30,7 +30,7 @@
         <tr><th>Name</th><th>Last modified</th><th>size</th></tr>
         {% for item in directory.list() %}
            <tr>
-              <td><img src="/icons/{{ item.icon() }}"> <a href="/viewsources/{{ item.relativePath() }}">{{ item.name() }}</a></td>
+              <td><img src="/icons/{{ item.icon() }}"> <a href="/{{ ref }}/{{ item.relativePath() }}">{{ item.name() }}</a></td>
               <td>{{ item.lastModified() }}</td>
               <td>{{ item.size() }}</td>
            </tr>

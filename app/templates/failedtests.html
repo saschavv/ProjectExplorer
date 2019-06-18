@@ -7,15 +7,12 @@
 
     <h1>Tests {{ project }}</h1>
     <table class="table">
-    <tr><th>Name</th><th width='80%'>Log</th></tr>
+    <tr><th>Name</th><th width='70%'>Log</th><th width='100'></th></tr>
     {% set ns = namespace( p = '' ) %}
     {% for test in tests %}
      {% if test.path != ns.p %}
       <tr>
-          <td colspan='2'>Folder: {{ test.path }}
-            <a href='/viewsources/{{ project }}/{{ test.path }}'><i class='fas fa-arrow-alt-circle-left'></i></a>
-            <a href='/viewtests/{{ project }}/{{ test.path }}'><i class='fas fa-arrow-alt-circle-right'></i></a>  
-          </td>
+          <td colspan='3'>Folder: {{ test.path }}</td>
       </tr>
       {% endif %}
       <tr>
@@ -27,6 +24,10 @@
                   {{ line }} <br/>
                {%- endfor %}
             </div>
+          </td>
+          <td>
+            <a href='/viewsources/{{ project }}/{{ test.path }}'><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a>
+            <a href='/viewtests/{{ project }}/tmp/{{ test.testpath }}/{{ test.test }}.dir'><i class='fas fa-file' rel="tooltip" title='test results'></i></a>  
           </td>
       </tr>
       {% set ns.p = test.path %}

@@ -169,6 +169,17 @@ def getTestOutput( pl, test ):
        testDiff['diff' ] = diffFile
        path = os.path.join( srcDir, testDiff['testpath'] )
 
+       fileLoc = os.path.join( fullTestDir, diffFile )
+       print('File: ' + fileLoc)
+       if os.path.exists( fileLoc ):
+         sbuf = os.fstat(os.open(fileLoc, os.O_RDONLY))
+         testDiff['diff_mtime'] =sbuf.st_mtime
+
+       fileLoc = os.path.join( fullTestDir, newFile )
+       if os.path.exists( fileLoc ):
+         sbuf = os.fstat(os.open(fileLoc, os.O_RDONLY))
+         testDiff['new_mtime'] =sbuf.st_mtime
+
        fileLoc = os.path.join( path, orgFile )
        if os.path.exists( fileLoc ):
          sbuf = os.fstat(os.open(fileLoc, os.O_RDONLY))

@@ -12,9 +12,9 @@
     <tr data-project='{{ project.name }}'>
         <td>{{ project.name }}</td>
         <td>{{ project.versionInfo.url }} - {{ project.versionInfo.revision }}</td>
-        <td><a href="{{ url_for( 'viewsources', project=project.name  ) }}">browse</a></td>
+        <td><a href="/viewsources/{{ project.name }}"><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a></td>
         <td>last build: <span class='lastbuild'>{{ project.buildInfo.lastModified }}</span></td>
-        <td><a href="{{ url_for( 'viewtests', project=project.name ) }}">browse</a></td>
+        <td><a href="/viewtests/{{ project.name }}"><i class='fas fa-file' rel="tooltip" title='test results'></i></a></td>
         <td>
             <span style="color:red" class="{{'hidden' if not project.testInfo.hasErrors }}"><i class="fas fa-times"></i></span> 
             <span style="color:green" class="{{'hidden' if project.testInfo.hasErrors }}"><i class="fas fa-check"></i></span>

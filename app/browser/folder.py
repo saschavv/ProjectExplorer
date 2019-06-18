@@ -180,9 +180,10 @@ class RootDirectory:
     return "root: " + self.root 
 
 class Explorer:
-  def __init__(self, root, relpath):
+  def __init__(self, ref, root, relpath):
     self.root = RootDirectory( root )
     self.relpath = relpath
+    self.ref = ref
 
   def render(self):
     abspath = self.root.absolutePath( self.relpath )   
@@ -199,7 +200,7 @@ class Explorer:
     if os.path.isdir(abspath):
       directory = Directory(self.root, self.relpath)
       directory.load()
-      return render_template('browse.html', title='browser', directory=directory, folder=self.relpath)
+      return render_template('browse.html', title='browser', directory=directory, folder=self.relpath, ref=self.ref)
 
 def main():
   e = Explorer( '/home/saschavv/development/', 'DianaProject' )
