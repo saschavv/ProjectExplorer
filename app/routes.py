@@ -1,4 +1,5 @@
 from flask import Flask, session, redirect, url_for, escape, request, render_template, send_file, send_from_directory, jsonify, flash
+
 from simplepam import authenticate
 from functools import wraps
 from shutil import copyfile
@@ -10,6 +11,7 @@ from app.forms import LoginForm
 from app.models import TestModel
 from app.collect import *
 from app.modify import *
+from app.browser.folder import *
 
 from app import app
 
@@ -198,21 +200,48 @@ def browse( browser, project, folder, path ):
   return "not a valid file"
 
 
-@app.route('/viewsources/<string:project>/<path:urlFilePath>')
-@app.route('/viewsources/<string:project>', defaults={'urlFilePath': None })
+@app.route('/viewsources/<path:urlFilePath>')
+@app.route('/viewsources', defaults={'urlFilePath': "." })
 @login_required
-def viewsources(project, urlFilePath):
-  pl = ProjectLocator( project, userName() )
-  folder = pl.srcdir
-  return browse( 'viewsources', project, folder, urlFilePath )
+def viewsources(urlFilePath):
+  pl = ProjectLocator( None, userName() )
+  root = pl.projects
+  explorer = Explorer( root, urlFilePath )
+  return explorer.render()
 
-@app.route('/viewtests/<string:project>/<path:urlFilePath>')
-@app.route('/viewtests/<string:project>', defaults={'urlFilePath': None })
+
+  #return browse( 'viewsources', project, folder, urlFilePath )
+
+@app.route('/viewtests/<path:urlFilePath>')
+@app.route('/viewtests', defaults={'urlFilePath': None })
 @login_required
-def viewtests(project, urlFilePath):
+def viewtests(urlFilePath):
   pl = ProjectLocator( project, userName() )
-  folder = pl.testdir
-  return browse( 'viewtests', project, folder, urlFilePath )
+  root = pl.testdirs
+  explorer = Explorer( root, urlFilePath )
+  return explorer.render()
 
+#---------------------------------------------------------------------------
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+# Custom indexing
+@app.route('/sources/<path:path>')
+def autoindex(path):
+    project = path.split('/')[0] 
+    pl = ProjectLocator( project, userName() )
+    folder = pl.projects
 
+    textFile = [ '.h', '.cpp', '.run', '.xml', '.py', '.res', '.log', '.dat' ]
+    if any( path.endswith( ext ) for ext in textFile ):
+      # do some code hightlight
+      data = ''
+      with open(fullpath, 'r') as file:
+        data = file.read()
+        return render_template('code.html', title='browser', currentFile=fullpath, code=data)
+
+    print('auto index: ' + path + ' ' + folder)
+
+    return project_index.render_autoindex(path, folder, template='auto.html')

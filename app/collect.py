@@ -25,7 +25,7 @@ def getProjectNames( user ):
   projects = [ 'diana' ]
   for listFile in files :
     projects.append( listFile.split('/')[-2] )
-  return projects
+  return sorted(projects)
 
 def getProjectModelsByName( names, user ):
   models = []

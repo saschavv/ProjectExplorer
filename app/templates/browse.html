@@ -1,20 +1,41 @@
 {% extends "base.html" %}
 
+{% macro breadcrumb(ent) %}
+  {% set parent = ent.parent() %}
+  {% if parent %}
+    {{ breadcrumb(parent) }}
+    <span class="sep">&raquo;</span>
+  {% endif %}
+  {% if not ent.is_root() %}
+    <a href="/viewsources/{{ ent.relativePath() }}">
+    {% set icon = ent.icon() %}
+    {% if icon %}
+      <img src="/icons/{{ icon }}" />
+    {% endif %}
+    {{ ent.name() }}
+  </a>
+  {% endif %}
+  {% if ent.is_root() %}
+      <img src="/icons/server.png" />
+  {% endif %}
+
+{% endmacro %}
+
 {% block app_content %}
 
   <div class="row">
     <div class="col-md-12">
-      <h3>Directory: {{ path }}</h3>
-      <hr/>
-      <ul>
-        {% for item in itemList %}
-            {% if path == None %}
-            <li><a href="/{{ browser }}/{{ project }}/{{ item }}">{{ item }}</a></li>
-            {% else %}
-            <li><a href="/{{ browser }}/{{ project }}/{{ path }}/{{ item }}">{{ item }}</a></li>
-            {% endif %}
+      <h5> {{ breadcrumb( directory ) }}</h5>
+      <table class="table">
+        <tr><th>Name</th><th>Last modified</th><th>size</th></tr>
+        {% for item in directory.list() %}
+           <tr>
+              <td><img src="/icons/{{ item.icon() }}"> <a href="/viewsources/{{ item.relativePath() }}">{{ item.name() }}</a></td>
+              <td>{{ item.lastModified() }}</td>
+              <td>{{ item.size() }}</td>
+           </tr>
         {% endfor %}
-      </ul>
+      </table>
     </div>
   </div>
 {% endblock %}

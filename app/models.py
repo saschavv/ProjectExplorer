@@ -8,6 +8,7 @@ class ProjectLocator(object):
     self.__project = project
     self.__user = user
 
+    self.__prjDir = '/uhome/{user}/projects'
     self.__srcDir = '/uhome/{user}/projects/{project}'
     self.__buildDir =  '/usr1/user/{user}/projects/{project}/debug'
     self.__testDir = '/usr1/user/{user}/projects/{project}/tmp'
@@ -34,6 +35,11 @@ class ProjectLocator(object):
     if self.project == 'diana':
       return self.__dianaRoot
     return self.__srcDir.format( project=self.project, user=self.user )
+
+  @property
+  def projects( self ):
+    """ The projects dir """
+    return self.__prjDir.format( user=self.user )
 
   @property
   def builddir( self ):
