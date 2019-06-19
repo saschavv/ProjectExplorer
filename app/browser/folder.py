@@ -2,8 +2,31 @@ import os
 import os.path
 import pprint
 import datetime
+import markdown
 from flask import Flask, url_for, render_template, send_file, send_from_directory
 
+def getDoc( folder ):
+  mdFile = os.path.join( folder, 'README.md' )
+  if os.path.exists( mdFile ):
+    with open ( mdFile, "r") as myfile:
+      return markdown.markdown( myfile.read() )
+  rstFile =  os.path.join(folder, 'README.rst' ) 
+  if os.path.exists( rstFile ):
+    with open ( rstFile, "r") as myfile:
+      return myfile.read()
+  return None
+
+def getText( file_name ):
+  if file_name.endswith( ".md" ):
+    if os.path.exists( file_name ):
+      with open ( file_name, "r") as f:
+        return markdown.markdown( f.read() )
+  if file_name.endswith( ".rst" ):
+    if os.path.exists( file_name ):
+      with open ( file_name, "r") as f:
+        return f.read()
+  return None
+  
 def sizeof_fmt(num, suffix='B'):
     for unit in ['','K','M','G','T','P','E','Z']:
         if abs(num) < 1024.0:
@@ -23,9 +46,11 @@ class Entry():
     return self._root
 
   def is_root(self):
-    return self._relpath == "." or self._relpath == ""
+    return self._relpath == "." or self._relpath == "" or self._relpath == None
 
   def relativePath(self):
+    if self._relpath == None:
+       return "."
     return self._relpath
 
   def icon(self):
@@ -65,16 +90,29 @@ class File(Entry):
     codeExt = [ 'h', 'cpp', 'xml', 'py', ]
     if self._extension in codeExt:
       return True
+    return False
+
+  def isDoc(self):
+    codeExt = [ 'md', 'rst' ]
+    if self._extension in codeExt:
+      return True
+    return False
+
+  def doc(self):
+    return getText( self.absolutePath() ) 
 
   def isText(self):
-    textExt = [ 'h', 'cpp', 'run', 'xml', 'py', 'res', 'log' ]
+    textExt = [ 'h', 'cpp', 'run', 'xml', 'py', 'res', 'log', 'dat', 'dcf', 'log' ]
+    print( 'check' + self._extension )
     if self._extension in textExt:
       return True
+    return False
 
   def canDownload(self):
     abs_path = self.absolutePath()
     if os.path.isfile( abs_path ):
       return True
+    return False
 
   def data(self):
     abs_path = self.absolutePath()
@@ -120,10 +158,14 @@ class Directory(Entry):
     self._last_modified = stat.st_mtime
     self._entries = []
     if name == None:
-      self._name = os.path.basename( dir )
+      if dir == None:
+        self._name = "."
+      else:
+        self._name = os.path.basename( dir )
     else:
       self._name = name
     self._icon = icon  
+    self._doc = None
 
   def parent(self):
     if self.is_root():
@@ -132,6 +174,9 @@ class Directory(Entry):
 
   def name(self):
     return self._name
+
+  def doc(self):
+    return self._doc
 
   def icon(self):
     return self._icon 
@@ -144,7 +189,7 @@ class Directory(Entry):
 
     parent, dir = os.path.split(self.relativePath())
 
-    if not self.parent().is_root():
+    if self.parent() != None and not self.parent().is_root():
       back_dir = Directory( self.rootDir(), parent,  "Parent directory", "arrow_turn_up.png" )
       self._entries.append( back_dir )
 
@@ -152,6 +197,8 @@ class Directory(Entry):
     dirlist = [x for x in os.listdir(absPath) if os.path.isdir(os.path.join(absPath, x))]
     filelist = [x for x in os.listdir(absPath) if not os.path.isdir(os.path.join(absPath, x))]
     itemList = sorted(dirlist) + sorted(filelist)
+
+    self._doc = getDoc( absPath )
 
     for item in itemList:
       abspath = os.path.join( absPath, item )
@@ -174,6 +221,8 @@ class RootDirectory:
     return self.root
 
   def absolutePath(self, relpath):  
+    if relpath == None:
+       return self.root
     return os.path.join( self.root, relpath)   
 
   def __str__(self):
@@ -187,8 +236,12 @@ class Explorer:
 
   def render(self):
     abspath = self.root.absolutePath( self.relpath )   
+    print( abspath )
     if os.path.isfile( abspath ):
       f = File( self.root, self.relpath )
+      if f.isDoc():
+        data = f.doc() 
+        return render_template('md.html', title='browser', currentFile=self.relpath, data=data)
       if f.isCode():
         data = f.data()
         return render_template('code.html', title='browser', currentFile=self.relpath, code=data)

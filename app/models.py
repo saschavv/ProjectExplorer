@@ -101,10 +101,19 @@ class ProjectModel(object):
     self.__buildInfo = None
     self.__testInfo = None
     self.__runInfo = None
+    self.__docInfo = None
 
   @property
   def name(self):
     return self.locator.project
+
+  @property
+  def docInfo(self):
+    return self.__docInfo
+
+  @docInfo.setter
+  def docInfo(self, value):
+    self.__docInfo = value
 
   @property
   def versionInfo(self):

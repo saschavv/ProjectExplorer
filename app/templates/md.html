@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block app_header %}
+{% endblock %} 
+
+{% block app_content %}
+  <div class="row">
+    <div class="col-md-12">
+       <p>Current file: {{ currentFile }}</p>
+       <pre>{{ data|safe }}</pre>
+    </div>
+  </div>
+{% endblock %} 
+
+{% block app_script %}
+<script>
+</script>
+{% endblock %} 

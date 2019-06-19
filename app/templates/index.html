@@ -12,9 +12,17 @@
     <tr data-project='{{ project.name }}'>
         <td>{{ project.name }}</td>
         <td>{{ project.versionInfo.url }} - {{ project.versionInfo.revision }}</td>
-        <td><a href="/viewsources/{{ project.name }}"><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a></td>
+        {% if project.name == "diana" %}
+          <td><a href="/diasources"><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a></td>
+        {% else %}
+          <td><a href="/viewsources/{{ project.name }}"><i class='fas fa-cogs' rel="tooltip" title='test input'></i></a></td>
+        {% endif %}
         <td>last build: <span class='lastbuild'>{{ project.buildInfo.lastModified }}</span></td>
+        {% if project.name == "diana" %}
+          <td><a href="/diasources/release"><i class='fas fa-file' rel="tooltip" title='test input'></i></a></td>
+        {% else %}
         <td><a href="/viewtests/{{ project.name }}"><i class='fas fa-file' rel="tooltip" title='test results'></i></a></td>
+        {% endif %}
         <td>
             <span style="color:red" class="{{'hidden' if not project.testInfo.hasErrors }}"><i class="fas fa-times"></i></span> 
             <span style="color:green" class="{{'hidden' if project.testInfo.hasErrors }}"><i class="fas fa-check"></i></span>
@@ -23,11 +31,21 @@
               <span class='numberoferrors'>{{ project.testInfo.numberOfFailedTests }} </span></a>
         </td>
     </tr>
+    {% if project.doc is not none %}
+      <tr><td></td><td colspan="5">{{ project.doc|safe }}</td> </tr>
+    {% endif %}
     {% endfor %}
     </table>
     <div class='update small'></div>
+    </div> <!-- col -->
+  </div> <!-- row -->
+  {% if doc is not none %}
+  <div class="row">
+    <div class="col-md-12">
+       {{ doc|safe }}
     </div>
   </div>
+  {% endif %}
 {% endblock %}
 
 {% block app_script %}

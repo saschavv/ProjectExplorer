@@ -9,16 +9,15 @@ import svn.local
 import svn.exception
 import difflib
 import psutil
+import markdown
 
 from app.models import *
 
 def getProjectNames( user ):
   """ 
-      Get all the projects for the current user. The projects 
-      are directories that are found in the PROJECT_SHARE folder.
+      Get all the projects for the current user. 
   """
   projectRoot='/uhome/' + user + '/projects/'
-  # get all dirs that contain a CMakeLists.txt
   projectsPath= projectRoot + os.sep + "*" + os.sep + ".svn"
   files = glob(projectsPath)
   # The 'special' global diana project.
@@ -26,6 +25,24 @@ def getProjectNames( user ):
   for listFile in files :
     projects.append( listFile.split('/')[-2] )
   return sorted(projects)
+
+def getProjectFolder( user):
+  return '/uhome/' + user + '/projects/'
+
+def getDoc( folder ):
+  mdFile = os.path.join( folder, 'README.md' )
+  if os.path.exists( mdFile ):
+    with open ( mdFile, "r") as myfile:
+      return markdown.markdown( myfile.read() )
+  rstFile =  os.path.join(folder, 'README.rst' ) 
+  if os.path.exists( rstFile ):
+    with open ( rstFile, "r") as myfile:
+      return myfile.read()
+  return None
+
+def getProjectDoc( user ):
+  folder = getProjectFolder( user )
+  return getDoc( folder )
 
 def getProjectModelsByName( names, user ):
   models = []
@@ -37,9 +54,12 @@ def getProjectModelsByName( names, user ):
       projectModel.testInfo = TestOverviewModel( 
           getRunnedTests( projectModel.locator ),
           getFailedTests( projectModel.locator ) )
+      projectModel.doc = getDoc( projectModel.locator.srcdir )
+        
       # projectModel.processInfo = getProcessModel( projectModel.locator )
     else:
       projectModel.testInfo = TestOverviewModel( [], [] )
+      projectModel.doc = None 
 
     models.append( projectModel )
   return models 

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% macro breadcrumb(ent) %}
+{% macro breadcrumb(ent, ref ) %}
   {% set parent = ent.parent() %}
   {% if parent %}
-    {{ breadcrumb(parent) }}
+    {{ breadcrumb(parent, ref) }}
     <span class="sep">&raquo;</span>
   {% endif %}
   {% if not ent.is_root() %}
-    <a href="/viewsources/{{ ent.relativePath() }}">
+    <a href="/{{ ref }}/{{ ent.relativePath() }}">
     {% set icon = ent.icon() %}
     {% if icon %}
       <img src="/icons/{{ icon }}" />
@@ -25,7 +25,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h5> {{ breadcrumb( directory ) }}</h5>
+      <h5> {{ breadcrumb( directory, ref ) }}</h5>
       <table class="table">
         <tr><th>Name</th><th>Last modified</th><th>size</th></tr>
         {% for item in directory.list() %}
@@ -38,5 +38,13 @@
       </table>
     </div>
   </div>
+  {% if directory.doc() is not none %}
+  <div class="row">
+    <div class="col-md-12">
+       {{ directory.doc()|safe }}
+    </div>
+  </div>
+  {% endif %}
+
 {% endblock %}
 

@@ -42,7 +42,8 @@ def injectForTemplates():
 def index():
     projectNames = getProjectNames( userName() )
     model = getProjectModelsByName( projectNames, userName() )
-    return render_template('index.html', title='Home', projects=model )
+    doc = getProjectDoc( userName() )
+    return render_template('index.html', title='Home', projects=model, doc=doc )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -209,8 +210,12 @@ def viewsources(urlFilePath):
   explorer = Explorer( 'viewsources', root, urlFilePath )
   return explorer.render()
 
-
-  #return browse( 'viewsources', project, folder, urlFilePath )
+@app.route('/diasources/<path:urlFilePath>')
+@app.route('/diasources', defaults={'urlFilePath': None })
+@login_required
+def diasources(urlFilePath):
+  explorer = Explorer( 'diasources', '/usr1/diana', urlFilePath )
+  return explorer.render()
 
 @app.route('/viewtests/<path:urlFilePath>')
 @app.route('/viewtests', defaults={'urlFilePath': None })
@@ -227,21 +232,3 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-# Custom indexing
-@app.route('/sources/<path:path>')
-def autoindex(path):
-    project = path.split('/')[0] 
-    pl = ProjectLocator( project, userName() )
-    folder = pl.projects
-
-    textFile = [ '.h', '.cpp', '.run', '.xml', '.py', '.res', '.log', '.dat' ]
-    if any( path.endswith( ext ) for ext in textFile ):
-      # do some code hightlight
-      data = ''
-      with open(fullpath, 'r') as file:
-        data = file.read()
-        return render_template('code.html', title='browser', currentFile=fullpath, code=data)
-
-    print('auto index: ' + path + ' ' + folder)
-
-    return project_index.render_autoindex(path, folder, template='auto.html')
