@@ -127,14 +127,8 @@ def getRunnedTests( locator ):
   return tests   
 
 def makeDiff( left, right ):
-  leftLines = []
-  with open ( left, "r") as leftFile:
-     leftLines = leftFile.readlines()
-  rightLines = []
-  with open ( right, "r") as rightFile:
-     rightLines = rightFile.readlines()
-  diff = difflib.HtmlDiff()
-  return diff.make_table(leftLines, rightLines, "New", "Res", context=True)  
+  unifiedDiff = os.popen('diff -u "' + left + '" "' + right + '"')
+  return unifiedDiff.read()
 
 def makeLogFromXml( xmlFile ):
   return ''

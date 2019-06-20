@@ -24,14 +24,14 @@ pip freeze > requirements.txt
 ## Task list
 
   - [x] show image diffs via before/after image slider
-  - [ ] add documentation (markdown files in directory)
+  - [x] add documentation (markdown files in directory)
   - [x] add project documentation (markdown files in top directory)
   - [x] support markdown files in browser
   - [x] better file browser 
   - [x] add timestamps to image results
   - [ ] compare project test with nightly build
-  - [ ] faster file comparison (current lib is very slow for large files)
+  - [x] faster file comparison (current lib is very slow for large files)
   - [ ] make support (only the ninja build file is checked)
-  - [ ] browse diana files
+  - [x] browse diana files
 
 
