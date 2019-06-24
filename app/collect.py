@@ -82,6 +82,10 @@ def getBuildModel( locator ):
   if os.path.exists( fileToCheck ):
     modified = time.ctime(os.path.getmtime(fileToCheck))
     return BuildModel( modified )
+  fileToCheck = os.path.join( locator.builddir, 'modules/diana/__init__.py' )
+  if os.path.exists( fileToCheck ):
+    modified = time.ctime(os.path.getmtime(fileToCheck))
+    return BuildModel( modified )
   return BuildModel( 0 )
 
 def getProcessModel( locator ):

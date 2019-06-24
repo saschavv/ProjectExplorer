@@ -31,7 +31,8 @@ pip freeze > requirements.txt
   - [x] add timestamps to image results
   - [ ] compare project test with nightly build
   - [x] faster file comparison (current lib is very slow for large files)
-  - [ ] make support (only the ninja build file is checked)
+  - [x] make support (only the ninja build file is checked)
   - [x] browse diana files
+  - [ ] show changed files on the dashboard
 
 
