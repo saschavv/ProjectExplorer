@@ -167,7 +167,7 @@ def getTestOutput( pl, test ):
           testDiff = {}
           testDiff['type' ] = 'diff'
           testDiff['name' ] = os.path.basename( resFile )
-          testDiff['diff' ] = makeDiff( newFile, resFile )
+          testDiff['diff' ] = makeDiff( resFile, newFile )
           testListing.append( testDiff ) 
     # Collect all png diffs.
     newFiles = [ f for f in names if f.endswith('_new.png') ]
