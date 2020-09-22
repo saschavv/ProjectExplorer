@@ -1,18 +1,30 @@
 # Project explorer
 
-Explorer of src/buid/test results.
+Web explorer of src/buid/test results.
 
-Uses Flask to explorer via a browser.
+## Run
 
-## Install
+First clone repository on local machine.
+
+Manually setup environment
 
 ~~~
 python3 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt 
-# or
-#python3 -m pip install simplepam
-#python3 -m pip install svn
+~~~
+
+Then run flask
+
+~~~
+export FLASK_APP=projectexplorer.py
+python3 -m flask run --host=0.0.0.0 --port=5001
+~~~
+
+There is a helper script that executes the step above:
+
+~~~
+server.sh --port=5001
 ~~~
 
 ## Save requirements
